@@ -1,24 +1,13 @@
-const homeController = require('./src/controllers/homeController');
-const contatoController = require('./src/controllers/contatoController')
 const express = require('express');
 const routes = express.Router();
 
-// function myMiddleware(req, res, next) {
-//     req.session = { nome: 'Luiz', sobrenome: 'Miranda'};
-//     next();
-// }
+const homeController = require('./src/controllers/homeController');
+const loginController = require('./src/controllers/loginController');
 
-routes.get('/', homeController.homePage);
-routes.post('/', homeController.postData);
-routes.get('/contato', contatoController.contatoPage);
+// Home Routes
+routes.get('/index', homeController.index);
+
+// Login Routes
+routes.get('/login/index', loginController.index);
 
 exports.routes =  routes;
-
-// route.get('/', (req, res) => {
-//     res.send(`
-//         <form action="/" method="POST"> 
-//             Nome: <input type="text" name="nome">
-//             <button>Send</button>
-//         </form>
-//     `);
-// });
