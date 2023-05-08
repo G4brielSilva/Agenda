@@ -1,99 +1,37 @@
+const { Auth, AuthSchema } = require('./AuthModel');
+
 const mongoose = require('mongoose');
-const validator = require('validator');
 const bcryptJs = require('bcryptjs');
 
-const LoginSchema = new mongoose.Schema({
-    email: { type: String, required: true },
-    password: { type: String, required: true }
-});
+const LoginModel = mongoose.model('Auth', AuthSchema);
 
-const LoginModel = mongoose.model('Login', LoginSchema);
-
-class Login {
+class Login extends Auth{
     constructor(body) {
-        this.body = body;
-        this.errors = [];
-        this.user = null;
+        super(body)
     }
 
-    async register() {
+    async login() {
         this.validate();
 
         if(this.hasErrors()) return;
 
-        await this.createUser();
-    }
-
-    async createUser() {
-        if (await this.userExists()) return;
-        try {
-            this.user = await LoginModel.create(this.body);
-        } catch(error) {
-            console.log(error);
-        }
+        await this.checkUserEntries();
     }
 
     async userExists() {
-        const user = await LoginModel.findOne({ email: this.body.email });
-        if(user) {
-            this.errors.push('Usuário já cadastrado.')
-            return true
-        } 
-        return false
+        this.user = await LoginModel.findOne({ email: this.body.email });
+        return (this.user) ? true: false
     }
 
-    getBody() {
-        return this.body;
+    checkPassword() {
+        return (bcryptJs.compareSync(this.body.password, this.user.password))? true: false;
     }
 
-    getErrors() {
-        return this.errors;
-    }
-
-    hasErrors() {
-        return (this.errors.length > 0)? true: false;
-    }
-
-    isValidEmail() {
-        if(!validator.isEmail(this.body.email)) {
-            this.errors.push('Invalid E-mail!')
+    async checkUserEntries() {
+        if (!(await this.userExists() && this.checkPassword())) {
+            this.user = null;
+            this.errors.push('Senha ou Usuário inválido(s)');
         }
-    }
-
-    isValidPassword() {
-        const passwordLength = this.body.password.length;
-        
-        if( passwordLength < 3 || passwordLength > 50) {
-            this.errors.push('The password must have between 3 and 50 characters.')
-        } else {
-            this.bcryptPassword();
-        }
-            
-    }
-
-    validate() {
-        this.cleanBodyData();
-
-        this.isValidEmail();
-        this.isValidPassword();
-    }
-
-    cleanBodyData() {
-        for(let key in this.body) {
-            if(typeof(this.body[key]) !== 'string') {
-                this.body[key] = '';
-            }
-        }
-
-        this.body = {
-            email: this.body.email,
-            password: this.body.password
-        };
-    }
-
-    bcryptPassword() {
-        const salt = bcryptJs.genSaltSync();
-        this.body.password = bcryptJs.hashSync(this.body.password, salt);
     }
 }
 

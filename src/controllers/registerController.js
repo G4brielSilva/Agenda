@@ -1,15 +1,14 @@
-const Login = require('../model/LoginModel')
+const Register = require('../model/RegisterModel')
 
 exports.index = async (req, res) => {
-    const login = new Login(req.body);
     try {
-        const login = new Login(req.body);
-        await login.register();
+        const register = new Register(req.body);
+        await register.register();
 
-        if(login.hasErrors()) {
-            req.flash('errors', login.getErrors());
+        if(register.hasErrors()) {
+            req.flash('errors', register.getErrors());
             req.session.save(function() {
-                const backUrl = /*res.headers.referer ||*/ '/login/index';
+                const backUrl = /*res.headers.referer ||*/ '/auth';
                 return res.redirect(backUrl);
             });
             return;
@@ -17,7 +16,7 @@ exports.index = async (req, res) => {
 
         req.flash('success', 'Usuário criado com sucesso');
         req.session.save(function() {
-            const backUrl = /*res.headers.referer ||*/ '/login/index';
+            const backUrl = /*res.headers.referer ||*/ '/auth';
             return res.redirect(backUrl);
         });
     }catch(err) {
