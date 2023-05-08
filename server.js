@@ -19,7 +19,7 @@ const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 
-const { myMiddleware, checkCsrfError, csrfMiddleware } = require("./src/middlewares/middleware");
+const { globalErrorMiddleware, checkCsrfError, csrfMiddleware } = require("./src/middlewares/middleware");
 
 
 app.use(helmet());
@@ -49,7 +49,7 @@ app.use(csrf({ cookie: true }));
 
 app.use(checkCsrfError);
 app.use(csrfMiddleware);
-app.use(myMiddleware);
+app.use(globalErrorMiddleware);
 app.use(routes.routes);
 
 app.on('ready', () => {

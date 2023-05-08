@@ -37,6 +37,7 @@
     "nodemon": "^2.0.22",
     "path": "^0.12.7",
     "regenerator-runtime": "^0.13.11",
-    "style-loader": "^3.3.2"
+    "style-loader": "^3.3.2",
+    "validator": "^13.9.0"
   }
 }
