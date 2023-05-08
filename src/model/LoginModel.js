@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcryptJs = require('bcryptjs');
 
 const LoginSchema = new mongoose.Schema({
     email: { type: String, required: true },
@@ -24,11 +25,21 @@ class Login {
     }
 
     async createUser() {
+        if (await this.userExists()) return;
         try {
             this.user = await LoginModel.create(this.body);
         } catch(error) {
             console.log(error);
         }
+    }
+
+    async userExists() {
+        const user = await LoginModel.findOne({ email: this.body.email });
+        if(user) {
+            this.errors.push('Usuário já cadastrado.')
+            return true
+        } 
+        return false
     }
 
     getBody() {
@@ -54,6 +65,8 @@ class Login {
         
         if( passwordLength < 3 || passwordLength > 50) {
             this.errors.push('The password must have between 3 and 50 characters.')
+        } else {
+            this.bcryptPassword();
         }
             
     }
@@ -76,6 +89,11 @@ class Login {
             email: this.body.email,
             password: this.body.password
         };
+    }
+
+    bcryptPassword() {
+        const salt = bcryptJs.genSaltSync();
+        this.body.password = bcryptJs.hashSync(this.body.password, salt);
     }
 }
 
