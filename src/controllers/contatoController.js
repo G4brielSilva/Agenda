@@ -43,19 +43,17 @@ exports.edit = async (req, res) => {
         if(!req.params.id) return res.render('404');
 
         const contato = new Contato(req.body);
-        console.log(contato.contato);
         await contato.edit(req.params.id);
-        console.log(contato.contato);
 
         if(contato.hasErrors()) {
             req.flash('errors', contato.getErrors());
             req.session.save(() => {
-                console.log(contato.contato);
-                res.redirect(`/contato/${req.params.id}`);
+                
+                res.redirect(`/`);
             });
             return;
         }
-
+        
         req.flash('success', 'Contato alterado com sucesso!');
         req.session.save(() => {
             res.redirect(`/contato/${contato.contato._id}`);

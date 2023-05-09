@@ -79,18 +79,31 @@ class Contato {
         };
     }
 
+    async edit(id) {
+        // console.log("opa1")
+        if(typeof id !==  'string') return;
+        // console.log("opa2")
+        this.validate();
+        // console.log("opa3")
+        if(this.hasErrors()) return;
+        // console.log("opa4")
+
+        this.contato = await ContatoModel.findByIdAndUpdate(id, this.body, { new: true });
+        // console.log("opa5")
+        // if (!this.contato) this.contato = {};
+    }
+
     static async getById(id) {
         if(typeof id !==  'string') return;
         return await ContatoModel.findById(id);
     }
 
-    async edit(id) {
-        if(typeof id !==  'string') return;
-        this.validate();
-        if(this.hasErrors())
-
-        this.contato = await ContatoModel.findByIdAndUpdate(id, this.body, { new: true });    
+    static async getContatos() {
+        const contatos = await ContatoModel.find()
+            .sort({ createdAt: -1 });
+        return contatos;
     }
+    
 };
 
 module.exports = Contato;
