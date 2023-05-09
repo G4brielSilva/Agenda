@@ -83,5 +83,14 @@ class Contato {
         if(typeof id !==  'string') return;
         return await ContatoModel.findById(id);
     }
-}
+
+    async edit(id) {
+        if(typeof id !==  'string') return;
+        this.validate();
+        if(this.hasErrors())
+
+        this.contato = await ContatoModel.findByIdAndUpdate(id, this.body, { new: true });    
+    }
+};
+
 module.exports = Contato;
