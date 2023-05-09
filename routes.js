@@ -27,5 +27,6 @@ routes.get('/contato', loginRequired, contatoController.index);
 routes.post('/contato/register', loginRequired, contatoController.register);
 routes.get('/contato/:id', loginRequired, contatoController.editIndex);
 routes.post('/contato/edit/:id', loginRequired, contatoController.edit);
+routes.get('/contato/delete/:id', loginRequired, contatoController.delete);
 
 exports.routes =  routes;
